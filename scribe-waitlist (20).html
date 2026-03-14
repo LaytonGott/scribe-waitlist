@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Scribe Early Access</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+  :root{
+    --bg:#F0EAE0;
+    --surface:rgba(26,23,20,0.04);
+    --border:rgba(26,23,20,0.1);
+    --border-hover:rgba(26,23,20,0.25);
+    --text:#1A1714;
+    --muted:rgba(26,23,20,0.5);
+    --faint:rgba(26,23,20,0.28);
+    --cream:#F0EAE0;
+    --accent:#c97070;
+  }
+
+  html,body{height:100%;background:var(--bg)}
+
+  body{
+    font-family:'DM Sans',sans-serif;
+    color:var(--text);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:48px 24px 64px;
+    position:relative;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* Subtle radial glow top center */
+  body::before{
+    content:'';
+    position:fixed;
+    top:-120px;
+    left:50%;
+    transform:translateX(-50%);
+    width:700px;
+    height:500px;
+    background:radial-gradient(ellipse at center, rgba(180,140,100,0.06) 0%, transparent 70%);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .page{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width:640px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:0;
+  }
+
+  /* ── Logo ── */
+  .logo-wrap{
+    margin-top:80px;
+    margin-bottom:48px;
+    opacity:0;
+    animation:fadeUp 0.7s ease 0.1s forwards;
+  }
+  .logo-wrap img{
+    width:220px;
+    /* Invert so it's cream/white on dark bg */
+    filter:none;
+  }
+
+  /* ── Headline ── */
+  .headline{
+    font-family:'Instrument Serif',serif;
+    font-size:clamp(50px,7vw,72px);
+    font-weight:400;
+    line-height:1.15;
+    text-align:center;
+    color:var(--text);
+    letter-spacing:-0.02em;
+    margin-bottom:16px;
+    opacity:0;
+    animation:fadeUp 0.7s ease 0.2s forwards;
+  }
+  .headline em{
+    font-style:italic;
+    color:var(--accent);
+  }
+
+  .sub{
+    font-size:19px;
+    font-weight:300;
+    color:var(--muted);
+    text-align:center;
+    line-height:1.6;
+    margin-bottom:48px;
+    max-width:480px;
+    opacity:0;
+    animation:fadeUp 0.7s ease 0.3s forwards;
+  }
+
+  /* ── Features ── */
+  .features{
+    display:flex;
+    gap:10px;
+    margin-bottom:44px;
+    flex-wrap:wrap;
+    justify-content:center;
+    opacity:0;
+    animation:fadeUp 0.7s ease 0.4s forwards;
+  }
+  .feat{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 18px;
+    border:0.5px solid var(--border);
+    border-radius:100px;
+    font-size:14px;
+    font-weight:400;
+    color:var(--muted);
+    letter-spacing:0.01em;
+    background:var(--surface);
+  }
+  .feat-dot{
+    width:5px;height:5px;
+    border-radius:50%;
+    background:var(--accent);
+    flex-shrink:0;
+  }
+
+  /* ── Counter ── */
+  .counter{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:20px;
+    opacity:0;
+    animation:fadeUp 0.7s ease 0.5s forwards;
+  }
+  .avatars{display:flex;align-items:center}
+  .av{
+    width:28px;height:28px;
+    border-radius:50%;
+    border:1.5px solid var(--bg);
+    display:flex;align-items:center;justify-content:center;
+    font-size:9px;font-weight:600;color:#fff;
+    margin-left:-7px;flex-shrink:0;
+  }
+  .av:first-child{margin-left:0}
+  .counter-text{font-size:15px;color:var(--muted)}
+  .counter-text strong{color:var(--accent);font-weight:600}
+
+  /* ── Form card ── */
+  .form-card{
+    width:100%;
+    background:#FEFCF9;
+    border:0.5px solid rgba(26,23,20,0.1);
+    border-radius:20px;
+    padding:44px;
+    box-shadow:0 4px 32px rgba(26,23,20,0.07);
+  }
+
+  .fields{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+
+  .field{
+    background:rgba(26,23,20,0.04);
+    border:0.5px solid var(--border);
+    border-radius:10px;
+    padding:14px 18px;
+    font-family:'DM Sans',sans-serif;
+    font-size:13px;
+    font-weight:300;
+    color:var(--text);
+    width:100%;
+    outline:none;
+    transition:border-color 0.2s, background 0.2s;
+    letter-spacing:0.02em;
+  }
+  .field::placeholder{color:var(--faint);font-size:13px;letter-spacing:0.08em;text-transform:uppercase}
+  .field:focus{border-color:var(--border-hover);background:#fff}
+
+  .btn{
+    width:100%;
+    padding:15px;
+    background:var(--accent);
+    color:#F0EAE0;
+    font-family:'DM Sans',sans-serif;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    transition:background 0.2s, transform 0.15s;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .btn:hover{background:#b85f5f;transform:translateY(-1px)}
+  .btn:active{transform:translateY(0)}
+  .btn-arrow{opacity:1;font-size:16px}
+
+  .form-note{
+    font-size:12px;
+    color:var(--faint);
+    text-align:center;
+    margin-top:14px;
+    letter-spacing:0.01em;
+  }
+
+  /* ── Success state ── */
+  .success{
+    display:none;
+    text-align:center;
+    padding:8px 0 4px;
+  }
+  .success-check{
+    width:44px;height:44px;border-radius:50%;
+    background:rgba(26,23,20,0.06);
+    border:0.5px solid rgba(26,23,20,0.12);
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto 14px;
+    font-size:18px;
+  }
+  .success h3{
+    font-family:'Instrument Serif',serif;
+    font-size:22px;font-weight:400;
+    color:var(--text);margin-bottom:6px;
+  }
+  .success p{font-size:13px;color:var(--muted);line-height:1.5}
+
+  /* ── Footer ── */
+  .footer{
+    margin-top:40px;
+    font-size:13px;
+    color:var(--faint);
+    text-align:center;
+    letter-spacing:0.04em;
+    opacity:0;
+    animation:fadeUp 0.7s ease 0.7s forwards;
+  }
+
+  @keyframes fadeUp{
+    from{opacity:0;transform:translateY(16px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+
+  @media(max-width:520px){
+    .form-card{padding:24px 20px;border-radius:16px}
+    .features{gap:8px}
+    .feat{font-size:13px;padding:6px 12px}
+  }
+
+
+  .built-for-pill{gap:7px !important}
+  .built-pill-label{font-size:13px;color:var(--muted);font-weight:400;}
+
+
+  /* ── Kit form overrides ── */
+  .seva-form.formkit-form{background:transparent !important;border:none !important;padding:0 !important;box-shadow:none !important;margin:0 !important;max-width:100% !important;}
+  .formkit-fields{display:flex !important;flex-direction:column !important;gap:10px !important;width:100% !important;}
+  .formkit-field{margin:0 !important;width:100% !important;}
+  .formkit-input{
+    background:rgba(26,23,20,0.05) !important;
+    border:0.5px solid rgba(26,23,20,0.14) !important;
+    border-radius:10px !important;
+    color:#1A1714 !important;
+    font-family:'DM Sans',sans-serif !important;
+    font-size:15px !important;
+    font-weight:400 !important;
+    padding:17px 20px !important;
+    width:100% !important;
+    outline:none !important;
+    box-shadow:none !important;
+  }
+  .formkit-input::placeholder{color:rgba(26,23,20,0.35) !important;font-size:13px !important;text-transform:uppercase !important;letter-spacing:0.08em !important;}
+  .formkit-input:focus{border-color:rgba(26,23,20,0.35) !important;background:#fff !important;}
+  .formkit-submit{
+    width:100% !important;
+    padding:18px !important;
+    background:var(--accent) !important;
+    color:#F0EAE0 !important;
+    font-family:'DM Sans',sans-serif !important;
+    font-size:14px !important;
+    font-weight:600 !important;
+    letter-spacing:0.1em !important;
+    text-transform:uppercase !important;
+    border:none !important;
+    border-radius:10px !important;
+    cursor:pointer !important;
+    margin:0 !important;
+    box-shadow:none !important;
+  }
+  .formkit-submit:hover{background:#b85f5f !important;transform:translateY(-1px) !important;}
+  .formkit-submit > span{padding:0 !important;}
+  .formkit-spinner{display:none !important;}
+  .formkit-powered-by-convertkit-container{opacity:0.2 !important;filter:grayscale(1) !important;justify-content:center !important;margin-top:8px !important;}
+  .formkit-alert{display:none !important;}
+  .formkit-alert:not(:empty){display:block !important;background:rgba(200,80,60,0.08) !important;border:0.5px solid rgba(200,80,60,0.2) !important;border-radius:8px !important;color:#c05040 !important;font-size:13px !important;padding:10px 14px !important;margin-bottom:8px !important;}
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js"></script>
+</head>
+<body>
+<div class="page">
+
+  <div class="logo-wrap">
+    <img src="data:image/png;base64,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" alt="Scribe"/>
+  </div>
+
+  <h1 class="headline">Content that sounds<br><em>exactly like you</em></h1>
+
+  <p class="sub">The first AI content generator trained on your voice.</p>
+
+  <div class="features">
+    <div class="feat"><div class="feat-dot"></div>Multi-platform</div>
+    <div class="feat"><div class="feat-dot"></div>Trained on your writing</div>
+    <div class="feat" style="gap:8px">
+      <div class="feat-dot"></div>
+      <span style="font-size:13px;color:var(--muted);font-weight:400;margin-right:2px">Built for</span>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.736-8.844L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+    </div>
+  </div>
+
+  <div class="counter">
+    <div class="avatars" id="av-wrap" style="display:none"></div>
+    <p class="counter-text" id="counter-text" style="display:none"><strong id="count"></strong> <span id="other-label">others</span> waiting</p>
+  </div>
+
+  <div class="form-card">
+    <form id="kit-form" action="https://app.kit.com/forms/9204516/subscriptions" method="POST" target="_blank" onsubmit="handleSubmit(event)">
+      <div class="fields">
+        <input class="field" type="text" name="fields[first_name]" id="fname" placeholder="First Name" autocomplete="given-name"/>
+        <input class="field" type="email" name="email_address" id="femail" placeholder="Email Address" required autocomplete="email"/>
+      </div>
+      <button type="submit" class="btn">Get Early Access →</button>
+      <p class="form-note">Be first in line when we launch. Unsubscribe anytime.</p>
+    </form>
+    <div id="success" style="display:none;text-align:center;padding:8px 0">
+      <div class="success-check">✓</div>
+      <h3 style="font-family:'Instrument Serif',serif;font-size:22px;font-weight:400;color:var(--text);margin-bottom:6px">You're on the list</h3>
+      <p style="font-size:13px;color:var(--muted)">We'll reach out when early access opens.</p>
+    </div>
+  </div>
+
+  <p class="footer">© 2026 Scribe</p>
+</div>
+
+<script>
+
+
+
+  function handleSubmit(e){
+    const name=document.getElementById('fname').value.trim();
+    const email=document.getElementById('femail').value.trim();
+    if(!email){e.preventDefault();document.getElementById('femail').focus();return;}
+    // Let the form POST to Kit natively (opens in background tab)
+    // Show success state
+    setTimeout(()=>{
+      document.getElementById('kit-form').style.display='none';
+      document.getElementById('success').style.display='block';
+      const cur=parseInt((document.getElementById('count').textContent||'0').replace(/,/g,''))||0;
+      updateCounter(cur+1);
+      if(name){
+        const initials=name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+        const hash=typeof md5==='function'?md5(email.trim().toLowerCase()):'';
+        const av=document.createElement('div');av.className='av';
+        if(hash){const img=document.createElement('img');img.src=`https://www.gravatar.com/avatar/${hash}?s=60&d=404`;img.style.cssText='width:100%;height:100%;border-radius:50%;object-fit:cover;';img.onerror=()=>{img.remove();av.textContent=initials;av.style.background='#c97070';av.style.fontSize='10px';av.style.fontWeight='600';av.style.color='#fff';};av.appendChild(img);}
+        else{av.textContent=initials;av.style.background='#c97070';av.style.fontSize='10px';av.style.fontWeight='600';av.style.color='#fff';}
+        document.getElementById('av-wrap').appendChild(av);
+      }
+    },100);
+  }
+
+  // ── LIVE COUNTER ──────────────────────────────────────────────────────────
+  // 1. Replace YOUR_FORM_ID  → the number in your Kit form URL
+  //    e.g. app.kit.com/forms/1234567  →  1234567
+  // 2. Replace YOUR_PUBLIC_API_KEY  → Kit → Settings → Developer → API Key
+  // The endpoint is public-safe (read-only subscriber count, no auth required beyond API key)
+  const KIT_FORM_ID = 'YOUR_FORM_ID';
+  const KIT_API_KEY = 'YOUR_PUBLIC_API_KEY';
+  function updateCounter(n){
+    if(typeof n==='number' && n>0){
+      document.getElementById('count').textContent=n.toLocaleString();
+      document.getElementById('other-label').textContent=n===1?'other':'others';
+      document.getElementById('counter-text').style.display='';
+      document.getElementById('av-wrap').style.display='';
+    }
+  }
+
+  if(KIT_FORM_ID !== 'YOUR_FORM_ID'){
+    fetch(`https://api.convertkit.com/v3/forms/${KIT_FORM_ID}?api_key=${KIT_API_KEY}`)
+      .then(r=>{if(!r.ok)throw new Error();return r.json();})
+      .then(d=>{ updateCounter(d?.form?.subscribed_count); })
+      .catch(()=>{});
+  }
+
+
+
+
+</script>
+</body>
+</html>
